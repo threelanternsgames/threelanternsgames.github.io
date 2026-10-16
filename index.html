@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>4D Sequencer – play your schedule on the model and check it</title>
+<meta name="description" content="4D Sequencer plays your Primavera P6 or Microsoft Project schedule on the IFC model, finds impossible sequences, runs 12 schedule quality checks and exports PowerPoint, Excel and video reports. Windows app.">
+<link rel="icon" href="icon-64.png">
+<style>
+  :root { --bg:#f4f2ee; --card:#fff; --fg:#1d1f24; --muted:#5c606a; --accent:#c2410c; --btn:#e8611a; --line:#dcd9d2; --ok:#2b8a3e; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#17181b; --card:#1f2024; --fg:#ecebe7; --muted:#a3a6ad; --accent:#f08a4b; --line:#2e3036; --ok:#5cc27a; } }
+  * { box-sizing:border-box }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 system-ui,"Segoe UI",sans-serif }
+  a { color:var(--accent) }
+  .wrap { max-width:1080px; margin:0 auto; padding:0 20px }
+  header.top { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 0 }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:700; font-size:18px; color:var(--fg); text-decoration:none }
+  nav a { color:var(--muted); text-decoration:none; margin-left:18px; font-size:15px }
+  nav a:hover { color:var(--fg) }
+  .hero { padding:40px 0 24px; text-align:center }
+  .hero h1 { font-size:clamp(30px,5vw,48px); line-height:1.15; margin:0 0 14px; letter-spacing:-.01em }
+  .hero p.lead { font-size:clamp(17px,2.2vw,20px); color:var(--muted); max-width:720px; margin:0 auto 26px }
+  .btn { display:inline-block; background:var(--btn); color:#fff; text-decoration:none; font-weight:600; padding:12px 22px; border-radius:10px; border:0; cursor:pointer; font-size:16px }
+  .btn.ghost { background:transparent; color:var(--fg); border:1px solid var(--line) }
+  .btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap }
+  .small { font-size:14px; color:var(--muted) }
+  .shot { margin:34px auto 0; border-radius:14px; overflow:hidden; border:1px solid var(--line); box-shadow:0 18px 50px rgba(0,0,0,.12) }
+  .shot img { display:block; width:100%; height:auto }
+  section { padding:56px 0 }
+  h2 { font-size:clamp(24px,3.4vw,32px); margin:0 0 8px; text-align:center }
+  .sub { text-align:center; color:var(--muted); margin:0 auto 32px; max-width:640px }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px }
+  .card h3 { margin:0 0 6px; font-size:17px }
+  .card p { margin:0; color:var(--muted); font-size:15px }
+  .feature { display:grid; grid-template-columns:1fr 1fr; gap:32px; align-items:center; margin:0 0 44px }
+  .feature:nth-child(even) .ftext { order:2 }
+  .feature img { width:100%; height:auto; border-radius:12px; border:1px solid var(--line); display:block }
+  .feature h3 { font-size:22px; margin:0 0 8px }
+  .feature p { color:var(--muted); margin:0 }
+  .plans { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; max-width:760px; margin:0 auto }
+  .plan { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px; display:flex; flex-direction:column }
+  .plan.best { border:2px solid var(--btn) }
+  .tag { font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.05em; min-height:18px }
+  .plan h3 { margin:2px 0 4px; font-size:18px }
+  .price { font-size:38px; font-weight:700; line-height:1.1 }
+  .price s { font-size:22px; color:var(--muted); font-weight:500; margin-right:6px }
+  .plan ul { padding-left:20px; color:var(--muted); font-size:15px; flex:1; margin:12px 0 18px }
+  .save { color:var(--ok); font-weight:600 }
+  .steps { counter-reset:s; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px }
+  .steps .card { position:relative; padding-top:44px }
+  .steps .card::before { counter-increment:s; content:counter(s); position:absolute; top:14px; left:20px; width:24px; height:24px; border-radius:50%; background:var(--btn); color:#fff; font-weight:700; font-size:13px; display:grid; place-items:center }
+  details { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 18px; margin:0 auto 10px; max-width:760px }
+  summary { font-weight:600; cursor:pointer }
+  details p { color:var(--muted); margin:8px 0 0 }
+  footer { border-top:1px solid var(--line); padding:28px 0 40px; color:var(--muted); font-size:14px }
+  footer .wrap { display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap }
+  footer a { color:var(--muted) }
+  @media (max-width:760px) { .feature { grid-template-columns:1fr; gap:14px } .feature:nth-child(even) .ftext { order:0 } nav a.hide-m { display:none } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="./"><img src="icon-64.png" width="32" height="32" alt="">4D Sequencer</a>
+    <nav><a class="hide-m" href="#features">Features</a><a href="#pricing">Pricing</a><a class="hide-m" href="#faq">Questions</a></nav>
+  </header>
+
+  <div class="hero">
+    <h1>Play your schedule on the model.<br>Then let it check the schedule for you.</h1>
+    <p class="lead">4D Sequencer plays your Primavera P6 or Microsoft Project schedule on the IFC model, finds impossible sequences, runs 12 schedule quality checks and exports PowerPoint, Excel and video reports.</p>
+    <div class="btns">
+      <a class="btn" href="https://apps.microsoft.com/detail/9NHQG2DLT98D">Get it from the Microsoft Store</a>
+      <a class="btn ghost" href="#pricing">See prices</a>
+    </div>
+    <p class="small" style="margin-top:12px">Windows 10 and 11 · 7-day free trial · no account needed</p>
+    <div class="shot"><img src="hero.webp" width="1600" height="900" alt="4D Sequencer showing a building model, the schedule checks and the Gantt chart side by side"></div>
+  </div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <h2>Built for planning engineers who review programmes</h2>
+    <p class="sub">Open an IFC model and a schedule. 4D Sequencer links the model elements to the activities automatically.</p>
+
+    <div class="feature"><div class="ftext"><h3>Finds impossible sequences</h3><p>Reads the model to find work that starts before the element it stands on, sits in or hangs from is finished: columns before the slab under them, doors before the wall around them, ceilings before the slab above. Each finding is shown on the model.</p></div><img src="s1.webp" width="1280" height="720" alt="Impossible sequence check shown on the model" loading="lazy"></div>
+
+    <div class="feature"><div class="ftext"><h3>Checks the baseline</h3><p>12 standard quality checks: missing links, negative and positive lags, Start-to-Finish links, hard constraints, high and negative float, long durations, invalid dates and out-of-sequence progress. Export them as numbered review comments in Excel, ready to send back to the contractor.</p></div><img src="s2.webp" width="1280" height="720" alt="Schedule quality checks" loading="lazy"></div>
+
+    <div class="feature"><div class="ftext"><h3>Plays the schedule day by day</h3><p>Watch the project being built with the Gantt chart moving in step. Works with Primavera P6 (XER and XML), Microsoft Project XML, Excel and CSV schedules.</p></div><img src="s3.webp" width="1280" height="720" alt="Schedule playing on the model" loading="lazy"></div>
+
+    <div class="feature"><div class="ftext"><h3>Shows delays on the model</h3><p>Baseline against actual, with late work in red and early work in green, or both side by side in split view.</p></div><img src="s4.webp" width="1280" height="720" alt="Delays shown on the model" loading="lazy"></div>
+
+    <div class="feature"><div class="ftext"><h3>Compares revisions</h3><p>Load an earlier revision or update and see what slipped, what improved, what was added or deleted, and which links changed.</p></div><img src="s5.webp" width="1280" height="720" alt="Revision comparison on the model" loading="lazy"></div>
+
+    <div class="grid">
+      <div class="card"><h3>Reports in one click</h3><p>PowerPoint, Excel, an interactive web report and an MP4 video of the sequence.</p></div>
+      <div class="card"><h3>Cost and cash flow</h3><p>Budget, spent to date and forecast at completion from Primavera P6 resource costs.</p></div>
+      <div class="card"><h3>Your files stay with you</h3><p>No account, no sign-in, no tracking. Everything runs on your computer and works offline.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <h2>Simple pricing</h2>
+    <p class="sub">Download free from the Microsoft Store and try everything for 7 days. Then choose a licence. One payment, no subscription.</p>
+    <div class="plans">
+      <div class="plan">
+        <div class="tag"></div>
+        <h3>1 year licence</h3>
+        <div class="price">$150</div>
+        <ul><li>Works for 1 year from purchase</li><li>One payment, no automatic renewal</li><li>All features and updates</li></ul>
+        <a class="btn ghost" href="https://buy.polar.sh/polar_cl_H1NgLOeAq99ewx6abfqZntaZYJbKPKcFIkYdJ2VUEOF">Buy 1 year licence</a>
+      </div>
+      <div class="plan best">
+        <div class="tag">Best value</div>
+        <h3>Permanent licence</h3>
+        <div class="price" id="permPrice">$400</div>
+        <ul><li>Never expires</li><li>One payment</li><li>All features and updates</li><li class="save" id="permSave">Costs less than 3 years of yearly payments</li></ul>
+        <a class="btn" id="permBuy" href="https://buy.polar.sh/polar_cl_Gf3T3HmLc8CXPrzBqiE6x94s0hOYHIuPkYXhi4134HP">Buy permanent licence</a>
+        <p class="small" id="permNote" style="margin:10px 0 0" hidden></p>
+      </div>
+    </div>
+    <p class="small" style="text-align:center;margin-top:16px">Prices include tax where it applies. Secure payment by Polar. Your licence key is emailed to you within 24 hours.<br>Already have a 1 year licence? Upgrade to permanent and pay only the difference: <a href="mailto:rawifystudio@gmail.com?subject=Upgrade%20to%20permanent%20licence">email us</a>.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>How buying works</h2>
+    <p class="sub">No account to create. Your key is yours.</p>
+    <div class="steps">
+      <div class="card"><h3>Try it</h3><p>Install from the Microsoft Store. The 7-day trial starts when you first open it.</p></div>
+      <div class="card"><h3>Buy a licence</h3><p>Click Buy here or inside the app. Enter the name to show on the licence: yours or your company's.</p></div>
+      <div class="card"><h3>Get your key</h3><p>Your licence key arrives by email within 24 hours.</p></div>
+      <div class="card"><h3>Activate</h3><p>In 4D Sequencer, click "Enter licence key", paste the key and press Activate. No internet needed.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <h2>Questions</h2>
+    <p class="sub">Anything else? Email <a href="mailto:rawifystudio@gmail.com">rawifystudio@gmail.com</a></p>
+    <details><summary>Which files can I open?</summary><p>Models in IFC format. Schedules from Primavera P6 (XER or XML), Microsoft Project (XML), Excel or CSV.</p></details>
+    <details><summary>Does it need the internet?</summary><p>No. 4D Sequencer runs on your computer and does not upload your files anywhere. Activation also works offline.</p></details>
+    <details><summary>What does it need to run?</summary><p>Windows 10 or 11 (64-bit) with Microsoft Edge, which is part of Windows, or Google Chrome.</p></details>
+    <details><summary>Can my company pay and get an invoice?</summary><p>Yes. At checkout, tick "I'm purchasing as a business" to add your company details. Your receipt and invoice can be downloaded from the customer portal at any time.</p></details>
+    <details><summary>Can I get a refund?</summary><p>Yes, within 14 days of purchase if your licence key does not work and we cannot fix it. See the <a href="terms.html">terms and refund policy</a>.</p></details>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Three Lanterns Games</span>
+    <span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms and refunds</a> · <a href="mailto:rawifystudio@gmail.com">Contact</a></span>
+  </div>
+</footer>
+
+<script>
+  // Launch price for the permanent licence until the end of 31 December 2026
+  if (new Date() < new Date(2027, 0, 1)) {
+    document.getElementById('permPrice').innerHTML = '<s>$400</s>$299';
+    document.getElementById('permSave').textContent = 'Costs less than 2 years of yearly payments';
+    document.getElementById('permBuy').href += '?discount_code=LAUNCH2026';
+    var n = document.getElementById('permNote'); n.textContent = 'Launch price until 31 December 2026'; n.hidden = false;
+  }
+</script>
+</body>
+</html>
